@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import AwsS3 from "./AwsS3.js";
 
 dotenv.config();
 

@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "login": {
+      "title": "Đăng nhập vào tài khoản của bạn",
+      "button": "Đăng nhập",
+      "emailPlaceholder": "Nhập email của bạn",
+      "passwordPlaceholder": "Nhập mật khẩu của bạn"
+    },
+    "register": {
+      "title": "Tạo tài khoản",
+      "button": "Đăng ký",
+      "Onboarding": {
+        "title": "Bắt đầu đăng ký",
+        "description": "Hoàn thành đăng ký ở đây (form mẫu).",
+        "button": "Hoàn thành đăng ký"
+      },
+      "KYC": {
+        "title": "KYC",
+        "description": "Hoàn thành KYC ở đây (form mẫu).",
+        "button": "Hoàn thành KYC"
+      }
+    },
+    "form": {
+      "firstName": "Tên",
+      "emailPlaceholder": "Nhập email của bạn",
+      "passwordPlaceholder": "Nhập mật khẩu của bạn"
+    },
+    "common": {
+      "user": "Người dùng",
+      "admin": "Quản trị viên",
+      "guest": "Khách",
+      "loading": "Đang tải...",
+      "logout": "Đăng xuất"
+    }
+  },
+  "dashboard": {
+    "page": {
+      "title": "Bảng điều khiển"
+    },
+    "actions": {
+      "editProfile": "Sửa hồ sơ",
+      "editSettings": "Sửa cài đặt",
+      "myMedia": "Media của tôi"
+    },
+    "sections": {
+      "editProfile": {
+        "title": "Sửa hồ sơ Creator Dashboard",
+        "description": "Nội dung dashboard dành cho creator."
+      },
+      "editSettings": {
+        "title": "Sửa cài đặt Creator Dashboard",
+        "description": "Nội dung dashboard dành cho creator."
+      },
+      "myMedia": {
+        "title": "Media của tôi Creator Dashboard",
+        "description": "Nội dung dashboard dành cho creator."
+      }
+    },
+    "messages": {
+      "welcome": "Chào mừng, {0}!"
+    }
+  },
+  "shop": {
+    "page": {
+      "title": "Cửa hàng",
+      "description": "Duyệt và mua sản phẩm"
+    },
+    "sections": {
+      "products": "Sản phẩm"
+    },
+    "messages": {
+      "comingSoon": "Sẽ có thêm sản phẩm sớm!"
+    }
+  },
+  "discover": {
+    "page": {
+      "title": "Khám phá",
+      "description": "Khám phá nội dung và tính năng mới"
+    },
+    "sections": {
+      "featured": "Nội dung nổi bật"
+    },
+    "messages": {
+      "explore": "Bắt đầu khám phá nền tảng của chúng tôi"
+    }
+  },
+  "common": {
+    "loading": "Đang tải..."
+  }
+}

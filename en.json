@@ -1,0 +1,90 @@
+{
+  "auth": {
+    "login": {
+      "title": "Login to Your Account",
+      "button": "Login",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password"
+    },
+    "register": {
+      "title": "Create Account",
+      "button": "Register",
+      "Onboarding": {
+        "title": "Onboarding",
+        "description": "Complete your onboarding here (placeholder form).",
+        "button": "Complete Onboarding"
+      },
+      "KYC": {
+        "title": "KYC",
+        "description": "Complete your KYC here (placeholder form).",
+        "button": "Complete KYC"
+      }
+    },
+    "form": {
+      "firstName": "First Name",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password"
+    },
+    "common": {
+      "user": "User",
+      "admin": "Admin",
+      "guest": "Guest",
+      "loading": "Loading...",
+      "logout": "Logout"
+    }
+  },
+  "dashboard": {
+    "page": {
+      "title": "Dashboard"
+    },
+    "actions": {
+      "editProfile": "Edit Profile",
+      "editSettings": "Edit Settings",
+      "myMedia": "My Media"
+    },
+    "sections": {
+      "editProfile": {
+        "title": "Creator Dashboard Edit Profile",
+        "description": "Creator-specific dashboard content."
+      },
+      "editSettings": {
+        "title": "Creator Dashboard Edit Settings",
+        "description": "Creator-specific dashboard content."
+      },
+      "myMedia": {
+        "title": "Creator Dashboard My Media",
+        "description": "Creator-specific dashboard content."
+      }
+    },
+    "messages": {
+      "welcome": "Welcome, {0}!"
+    }
+  },
+  "shop": {
+    "page": {
+      "title": "Shop",
+      "description": "Browse and purchase products"
+    },
+    "sections": {
+      "products": "Products"
+    },
+    "messages": {
+      "comingSoon": "More products coming soon!"
+    }
+  },
+  "discover": {
+    "page": {
+      "title": "Discover",
+      "description": "Explore new content and features"
+    },
+    "sections": {
+      "featured": "Featured Content"
+    },
+    "messages": {
+      "explore": "Start exploring our platform"
+    }
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}

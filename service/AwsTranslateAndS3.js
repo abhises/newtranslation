@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import AwsS3 from "./AwsS3.js";
+import AWS from "aws-sdk";
 
 dotenv.config();
 
@@ -13,12 +14,18 @@ export default class AwsTranslateAndS3 {
     sourceLang,
   }) {
     this.region = region || process.env.REGION || "us-east-1";
-    this.bucket = bucket;
-    this.s3InputPrefix = s3InputPrefix;
-    this.s3OutputPrefix = s3OutputPrefix;
-    this.roleArn = roleArn;
-    this.sourceLang = sourceLang;
-    this.translate = new AWS.Translate({ region: this.region });
+    this.bucket = bucket || process.env.S3_BUCKET;
+    this.s3InputPrefix = s3InputPrefix || process.env.S3_INPUT_PREFIX;
+    this.s3OutputPrefix = s3OutputPrefix || process.env.S3_OUTPUT_PREFIX;
+    this.roleArn = roleArn || process.env.TRANSLATE_ROLE_ARN;
+    this.sourceLang = sourceLang || process.env.SOURCE_LANG || "en";
+    this.translate = new AWS.Translate({
+      region: this.region,
+      credentials: {
+        accessKeyId: process.env.AWS_TRANSLATE_KEY,
+        secretAccessKey: process.env.AWS_TRANSLATE_SECRET,
+      },
+    });
 
     // init your AwsS3
     if (AwsS3 && typeof AwsS3.init === "function") AwsS3.init(this.region);

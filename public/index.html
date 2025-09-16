@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AWS S3 Dashboard</title>
+  </head>
+  <body>
+    <h1>🪣 AWS S3 API Frontend</h1>
+
+    <h2>1. Create a Bucket</h2>
+    <input type="text" id="createBucket" placeholder="Bucket name" />
+    <button onclick="createBucket()">Create</button>
+    <pre id="createBucketOutput"></pre>
+
+    <h2>2. List Buckets</h2>
+    <button onclick="listBuckets()">List Buckets</button>
+    <div id="bucketsOutput"></div>
+
+    <h2>3. Check if Bucket Exists</h2>
+    <input type="text" id="checkBucketName" placeholder="Bucket name" />
+    <button onclick="checkBucketExists()">Check</button>
+    <pre id="bucketExistsOutput"></pre>
+
+    <h2>4. Delete Bucket by Name</h2>
+    <input type="text" id="deleteBucketOnly" placeholder="Bucket name" />
+    <button onclick="deleteBucket()">Delete Bucket</button>
+    <pre id="deleteBucketOutput"></pre>
+
+    <h2>5. Upload File</h2>
+    <input type="text" id="uploadBucket" placeholder="Bucket name" /><br />
+    <input
+      type="text"
+      id="uploadKey"
+      placeholder="File key (e.g. image.jpg)"
+    /><br />
+    <input type="file" id="uploadFile" /><br />
+    <button onclick="uploadFile()">Upload</button>
+    <pre id="uploadOutput"></pre>
+
+    <h2>6. Check if File Exists</h2>
+    <input type="text" id="fileExistsBucket" placeholder="Bucket name" /><br />
+    <input
+      type="text"
+      id="fileExistsKey"
+      placeholder="File key (e.g. image.jpg)"
+    /><br />
+    <button onclick="checkFileExists()">Check</button>
+    <pre id="fileExistsOutput"></pre>
+
+    <h2>7. Delete File</h2>
+    <input type="text" id="deleteBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="deleteKey" placeholder="File key" />
+    <button onclick="deleteFile()">Delete</button>
+    <pre id="deleteOutput"></pre>
+
+    <h2>8. Delete Multiple Files</h2>
+    <input
+      type="text"
+      id="deleteMultipleBucket"
+      placeholder="Bucket name"
+    /><br />
+    <textarea
+      id="deleteMultipleKeys"
+      placeholder="Enter one file key per line"
+      rows="5"
+      cols="50"
+    ></textarea
+    ><br />
+    <button onclick="deleteMultipleFiles()">Delete Multiple Files</button>
+    <pre id="deleteMultipleOutput"></pre>
+
+    <h2>9. List Files</h2>
+    <input type="text" id="listFilesBucket" placeholder="Bucket name" />
+    <button onclick="listFiles()">List</button>
+    <pre id="filesOutput"></pre>
+
+    <h2>10. Get File</h2>
+    <input type="text" id="downloadBucket" placeholder="Bucket name" /><br />
+    <input
+      type="text"
+      id="downloadKey"
+      placeholder="File key (e.g. image.jpg)"
+    /><br />
+    <button onclick="getFile()">Get File</button>
+    <pre id="getFileOutput"></pre>
+
+    <h2>11. Copy File</h2>
+    <input type="text" id="sourceBucket" placeholder="Source bucket" /><br />
+    <input
+      type="text"
+      id="sourceKey"
+      placeholder="Source key (e.g. image.jpg)"
+    /><br />
+    <input type="text" id="destBucket" placeholder="Destination bucket" /><br />
+    <input
+      type="text"
+      id="destKey"
+      placeholder="Destination key (e.g. copied.jpg)"
+    /><br />
+    <button onclick="copyFile()">Copy File</button>
+    <pre id="copyFileOutput"></pre>
+
+    <h2>12. Initiate Multipart Upload</h2>
+    <input type="text" id="multipartBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="multipartKey" placeholder="File key" /><br />
+    <button onclick="initiateMultipart()">Initiate Upload</button>
+    <pre id="multipartOutput"></pre>
+
+    <h2>13. Upload Multipart Part</h2>
+    <input type="text" id="partBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="partKey" placeholder="File key" /><br />
+    <input type="text" id="uploadId" placeholder="Upload ID" /><br />
+    <input
+      type="number"
+      id="partNumber"
+      placeholder="Part Number"
+      min="1"
+    /><br />
+    <input type="file" id="partFile" /><br />
+    <button onclick="uploadPart()">Upload Part</button>
+    <pre id="uploadPartOutput"></pre>
+
+    <h2>14. Complete Multipart Upload</h2>
+    <input type="text" id="completeBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="completeKey" placeholder="File key" /><br />
+    <input type="text" id="completeUploadId" placeholder="Upload ID" /><br />
+    <textarea
+      id="completeParts"
+      placeholder='Parts JSON: [{"ETag":"etag1","PartNumber":1}, {"ETag":"etag2","PartNumber":2}]'
+      rows="5"
+      cols="50"
+    ></textarea
+    ><br />
+    <button onclick="completeMultipart()">Complete Upload</button>
+    <pre id="completeOutput"></pre>
+
+    <h2>15. Abort Multipart Upload</h2>
+    <input type="text" id="abortBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="abortKey" placeholder="File key" /><br />
+    <input type="text" id="abortUploadId" placeholder="Upload ID" /><br />
+    <button id="abortBtn" onclick="abortMultipart()">🚫 Abort Upload</button>
+    <pre id="abortOutput"></pre>
+
+    <h2>16. Get Presigned URL</h2>
+    <input type="text" id="presignBucket" placeholder="Bucket name" /><br />
+    <input type="text" id="presignKey" placeholder="File key" />
+    <button onclick="getPresignedUrl()">Get URL</button>
+    <pre id="urlOutput"></pre>
+
+    <script>
+      const baseUrl = "http://localhost:4000/s3";
+
+      async function createBucket() {
+        const bucket = document.getElementById("createBucket").value;
+        const outputEl = document.getElementById("createBucketOutput");
+        outputEl.textContent = ""; // Clear previous output
+
+        try {
+          const res = await fetch(`${baseUrl}/bucket`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bucket }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            outputEl.textContent = JSON.stringify(
+              { message: data.message },
+              null,
+              2
+            );
+            listBuckets(); // Refresh list
+          } else {
+            // Show full error response as-is
+            outputEl.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (err) {
+          outputEl.textContent = "Fetch error: " + err.message;
+        }
+      }
+
+      async function listBuckets() {
+        const outputEl = document.getElementById("bucketsOutput");
+        outputEl.innerHTML = ""; // Clear previous output
+
+        try {
+          const res = await fetch(`${baseUrl}/buckets`);
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            outputEl.textContent = JSON.stringify(data, null, 2);
+            return;
+          }
+
+          if (!Array.isArray(data.buckets) || data.buckets.length === 0) {
+            outputEl.textContent = "No buckets found.";
+            return;
+          }
+
+          data.buckets.forEach((bucket) => {
+            const div = document.createElement("div");
+            div.style.marginBottom = "10px";
+
+            const name = document.createElement("strong");
+            name.textContent = bucket.Name + " ";
+
+            const created = document.createElement("span");
+            if (bucket.CreationDate) {
+              const createdDate = new Date(bucket.CreationDate);
+              created.textContent = `(Created: ${createdDate.toLocaleString()}) `;
+            }
+
+            const btn = document.createElement("button");
+            btn.textContent = "Delete";
+            btn.onclick = async () => {
+              if (
+                confirm(`Are you sure you want to delete "${bucket.Name}"?`)
+              ) {
+                const res = await fetch(`${baseUrl}/bucket`, {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ bucket: bucket.Name }),
+                });
+                const result = await res.json();
+                listBuckets(); // Refresh
+              }
+            };
+
+            div.appendChild(name);
+            div.appendChild(created);
+            div.appendChild(btn);
+            outputEl.appendChild(div);
+          });
+        } catch (err) {
+          outputEl.textContent = "Fetch error: " + err.message;
+        }
+      }
+
+      async function checkBucketExists() {
+        const bucket = document.getElementById("checkBucketName").value;
+        const outputEl = document.getElementById("bucketExistsOutput");
+        outputEl.textContent = ""; // Clear previous output
+
+        try {
+          const res = await fetch(`${baseUrl}/bucket/exists?bucket=${bucket}`);
+          const result = await res.json();
+
+          if (res.ok && result.success) {
+            // ✅ Success response
+            outputEl.textContent = JSON.stringify(
+              { message: result.message, exists: result.exists },
+              null,
+              2
+            );
+          } else {
+            // ❌ Error response in structured format
+            outputEl.textContent = JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          outputEl.textContent = "Fetch error: " + err.message;
+        }
+      }
+
+      async function deleteBucket() {
+        const bucket = document.getElementById("deleteBucketOnly").value;
+
+        const res = await fetch(`${baseUrl}/bucket`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bucket }),
+        });
+
+        const result = await res.json();
+        document.getElementById("deleteBucketOutput").textContent =
+          JSON.stringify(result, null, 2);
+        listBuckets();
+      }
+
+      async function uploadFile() {
+        const bucket = document.getElementById("uploadBucket").value.trim();
+        const key = document.getElementById("uploadKey").value.trim();
+        const fileInput = document.getElementById("uploadFile");
+        const outputEl = document.getElementById("uploadOutput");
+        outputEl.textContent = "Uploading...";
+
+        const file = fileInput.files[0];
+        if (!bucket || !key || !file) {
+          outputEl.textContent = "❗ Bucket, Key, and File are required.";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("bucket", bucket);
+        formData.append("key", key);
+        formData.append("file", file);
+
+        try {
+          const res = await fetch(`${baseUrl}/upload`, {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            outputEl.textContent = JSON.stringify(
+              { message: data.message || "Upload successful" },
+              null,
+              2
+            );
+          } else {
+            // ❌ Show full structured error response as JSON
+            outputEl.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (err) {
+          outputEl.textContent = "🚨 Fetch error: " + err.message;
+        }
+      }
+
+      async function listFiles() {
+        const bucket = document.getElementById("listFilesBucket").value;
+        const res = await fetch(`${baseUrl}/files?bucket=${bucket}`);
+        const data = await res.json();
+        document.getElementById("filesOutput").textContent = JSON.stringify(
+          data.files,
+          null,
+          2
+        );
+      }
+
+      async function getFile() {
+        const bucket = document.getElementById("downloadBucket").value.trim();
+        const key = document.getElementById("downloadKey").value.trim();
+        const output = document.getElementById("getFileOutput");
+
+        output.textContent = "Fetching file...";
+
+        try {
+          const response = await fetch(
+            `${baseUrl}/file?bucket=${encodeURIComponent(
+              bucket
+            )}&key=${encodeURIComponent(key)}`
+          );
+
+          // If content is returned as a downloadable stream
+          const contentDisposition = response.headers.get(
+            "Content-Disposition"
+          );
+          const filenameMatch =
+            contentDisposition &&
+            contentDisposition.match(/filename="?([^"]+)"?/);
+          const suggestedFilename = filenameMatch ? filenameMatch[1] : key;
+
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = suggestedFilename;
+            document.body.appendChild(link);
+            link.click();
+
+            URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+
+            output.textContent = `✅ Downloaded: ${suggestedFilename}`;
+          } else {
+            const result = await response.json();
+            output.textContent =
+              `❌ Error: ${result.message || "Failed to download file"}` +
+              (result.details
+                ? "\nDetails:\n" +
+                  result.details
+                    .map((e, idx) => `• [${idx + 1}] ${e.message}`)
+                    .join("\n")
+                : "");
+          }
+        } catch (err) {
+          output.textContent = "🚨 Fetch error: " + err.message;
+        }
+      }
+
+      async function deleteMultipleFiles() {
+        const bucket = document
+          .getElementById("deleteMultipleBucket")
+          .value.trim();
+        const keysText = document
+          .getElementById("deleteMultipleKeys")
+          .value.trim();
+        const output = document.getElementById("deleteMultipleOutput");
+
+        output.textContent = "Deleting files...";
+
+        const keys = keysText
+          .split("\n")
+          .map((k) => k.trim())
+          .filter((k) => k.length > 0);
+
+        try {
+          const res = await fetch(`${baseUrl}/files`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bucket, keys }),
+          });
+
+          const result = await res.json();
+
+          // ✅ Just show full backend response
+          output.textContent = JSON.stringify(result, null, 2);
+        } catch (err) {
+          output.textContent = "🚨 Fetch error: " + err.message;
+        }
+      }
+
+      async function getPresignedUrl() {
+        const bucket = document.getElementById("presignBucket").value;
+        const key = document.getElementById("presignKey").value;
+        const res = await fetch(
+          `${baseUrl}/presign?bucket=${bucket}&key=${key}`
+        );
+        const data = await res.json();
+        document.getElementById("urlOutput").textContent =
+          data.url || "Error getting URL";
+      }
+
+      async function copyFile() {
+        const sourceBucket = document
+          .getElementById("sourceBucket")
+          .value.trim();
+        const sourceKey = document.getElementById("sourceKey").value.trim();
+        const destBucket = document.getElementById("destBucket").value.trim();
+        const destKey = document.getElementById("destKey").value.trim();
+
+        const output = document.getElementById("copyFileOutput");
+        output.textContent = "Copying file...";
+
+        try {
+          const res = await fetch(`${baseUrl}/file/copy`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sourceBucket,
+              sourceKey,
+              destBucket,
+              destKey,
+            }),
+          });
+
+          const result = await res.json();
+
+          if (!res.ok || !result.success) {
+            // ✅ Show raw error object with nested fields (e.g., `data`)
+            output.textContent = JSON.stringify(result, null, 2);
+          } else {
+            output.textContent = `✅ ${result.message}`;
+          }
+        } catch (err) {
+          output.textContent = "🚨 Fetch error: " + err.message;
+        }
+      }
+
+      async function checkFileExists() {
+        const bucket = document.getElementById("fileExistsBucket").value;
+        const key = document.getElementById("fileExistsKey").value;
+        const outputEl = document.getElementById("fileExistsOutput");
+
+        outputEl.textContent = "Checking...";
+
+        try {
+          const res = await fetch(
+            `${baseUrl}/file/exists?bucket=${bucket}&key=${key}`
+          );
+          const result = await res.json();
+
+          if (!res.ok || !result.success) {
+            let errorMessage = `Error: ${
+              result.message || "Failed to check file existence"
+            }`;
+
+            if (Array.isArray(result.errors)) {
+              errorMessage +=
+                "\nDetails:\n" +
+                result.errors
+                  .map(
+                    (e, idx) =>
+                      `• [${idx + 1}] ${e.message || JSON.stringify(e)}`
+                  )
+                  .join("\n");
+            }
+
+            outputEl.textContent = errorMessage;
+          } else {
+            outputEl.textContent = JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          // Catch network errors or JSON parsing issues
+          outputEl.textContent = "Fetch error: " + err.message;
+        }
+      }
+
+      async function deleteFile() {
+        const bucket = document.getElementById("deleteBucket").value;
+        const key = document.getElementById("deleteKey").value;
+        const output = document.getElementById("deleteOutput");
+
+        output.textContent = "Deleting file...";
+
+        try {
+          const res = await fetch(`${baseUrl}/file`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bucket, key }),
+          });
+          const result = await res.json();
+
+          if (!res.ok || result.error) {
+            // Show main error message
+            let errorMessage = `Error: ${
+              result.error || "Failed to delete file"
+            }`;
+
+            // If there are detailed errors array, show them nicely
+            if (result.details && Array.isArray(result.details)) {
+              errorMessage += "\nDetails:\n";
+              errorMessage += result.details
+                .map(
+                  (e, idx) => `• [${idx + 1}] ${e.message || JSON.stringify(e)}`
+                )
+                .join("\n");
+            }
+
+            output.textContent = errorMessage;
+          } else if (result.success) {
+            output.textContent = result.message || "File deleted successfully.";
+          } else {
+            // Fallback - just print the full response
+            output.textContent = JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          output.textContent = "Fetch error: " + err.message;
+        }
+      }
+
+      async function initiateMultipart() {
+        const bucket = document.getElementById("multipartBucket").value;
+        const key = document.getElementById("multipartKey").value;
+
+        try {
+          const res = await fetch(
+            "http://localhost:4000/s3/multipart/initiate",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bucket, key }),
+            }
+          );
+          const data = await res.json();
+          if (res.ok) {
+            document.getElementById("multipartOutput").textContent =
+              "Upload ID: " + data.uploadId;
+          } else {
+            document.getElementById("multipartOutput").textContent =
+              "Error: " + data.error;
+          }
+        } catch (err) {
+          document.getElementById("multipartOutput").textContent =
+            "Fetch error: " + err.message;
+        }
+      }
+
+      async function uploadPart() {
+        const bucket = document.getElementById("partBucket").value;
+        const key = document.getElementById("partKey").value;
+        const uploadId = document.getElementById("uploadId").value;
+        const partNumber = parseInt(
+          document.getElementById("partNumber").value
+        );
+        const fileInput = document.getElementById("partFile");
+
+        if (
+          !bucket ||
+          !key ||
+          !uploadId ||
+          !partNumber ||
+          fileInput.files.length === 0
+        ) {
+        }
+
+        // Read the file as base64 to send in JSON
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = async function (event) {
+          const base64Data = event.target.result.split(",")[1]; // Remove "data:*/*;base64," prefix
+
+          try {
+            const res = await fetch(
+              "http://localhost:4000/s3/multipart/upload-part",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  bucket,
+                  key,
+                  uploadId,
+                  partNumber,
+                  bodyBase64: base64Data,
+                }),
+              }
+            );
+            const data = await res.json();
+            if (res.ok) {
+              document.getElementById(
+                "uploadPartOutput"
+              ).textContent = `Uploaded part #${data.PartNumber} with ETag: ${data.ETag}`;
+            } else {
+              document.getElementById("uploadPartOutput").textContent =
+                "Error: " + data.error;
+            }
+          } catch (err) {
+            document.getElementById("uploadPartOutput").textContent =
+              "Fetch error: " + err.message;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function completeMultipart() {
+        const bucket = document.getElementById("completeBucket").value;
+        const key = document.getElementById("completeKey").value;
+        const uploadId = document.getElementById("completeUploadId").value;
+        const partsText = document.getElementById("completeParts").value;
+        const output = document.getElementById("completeOutput");
+
+        output.textContent = "";
+
+        let parts;
+        try {
+          parts = JSON.parse(partsText);
+          if (!Array.isArray(parts)) throw new Error("Parts must be an array");
+        } catch (e) {
+          output.textContent = `❌ Invalid parts JSON: ${e.message}`;
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            "http://localhost:4000/s3/multipart/complete",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bucket, key, uploadId, parts }),
+            }
+          );
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            output.textContent = `✅ ${data.message}`;
+          } else {
+            let errorMessage = `❌ ${
+              data.message || "Multipart completion failed"
+            }`;
+            const errors = data.errors;
+            if (Array.isArray(errors)) {
+              errorMessage +=
+                "\nDetails:\n" +
+                errors
+                  .map(
+                    (e, idx) =>
+                      `• [${idx + 1}] ${e.message || JSON.stringify(e)}`
+                  )
+                  .join("\n");
+            }
+            output.textContent = errorMessage;
+          }
+        } catch (err) {
+          output.textContent = `🚨 Fetch error: ${err.message}`;
+        }
+      }
+
+      async function abortMultipart() {
+        const bucket = document.getElementById("abortBucket").value.trim();
+        const key = document.getElementById("abortKey").value.trim();
+        const uploadId = document.getElementById("abortUploadId").value.trim();
+        const output = document.getElementById("abortOutput");
+        const button = document.getElementById("abortBtn");
+
+        // Clear and disable button
+        output.textContent = "";
+        button.disabled = true;
+        button.textContent = "Aborting...";
+
+        if (!bucket || !key || !uploadId) {
+          output.textContent =
+            "❗ Please fill in all fields (bucket, key, uploadId).";
+          button.disabled = false;
+          button.textContent = "🚫 Abort Upload";
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:4000/s3/multipart/abort", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bucket, key, uploadId }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            output.textContent = `✅ ${data.message}`;
+          } else {
+            output.textContent =
+              "❌ Error: " + (data.message || "Failed to abort upload");
+            if (data.errors && Array.isArray(data.errors)) {
+              output.textContent +=
+                "\nDetails:\n" +
+                data.errors
+                  .map((e, i) => `• [${i + 1}] ${e.message}`)
+                  .join("\n");
+            }
+          }
+        } catch (err) {
+          output.textContent = "🚨 Fetch error: " + err.message;
+        }
+
+        button.disabled = false;
+        button.textContent = "🚫 Abort Upload";
+      }
+    </script>
+  </body>
+</html>

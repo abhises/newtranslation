@@ -1,3 +1,11 @@
+import { Logger } from "../utils/index.js";
+import AwsTranslateAndS3 from "./AwsTranslateAndS3.js";
+import AwsS3 from "./AwsS3.js";
+import path from "path";
+import fsp from "fs/promises";
+
+const PLACEHOLDER_REGEX = /\{([^}]+)\}/g;
+
 const LOCALES = {
   source: { folderCode: "en", awsCode: "en", name: "English" },
   targets: [
@@ -10,6 +18,127 @@ const LOCALES = {
     // add more if needed
   ],
 };
+
+function flattenJson(obj, prefix = "", out = {}) {
+  if (obj == null || typeof obj !== "object") return out;
+  for (const [k, v] of Object.entries(obj)) {
+    const key = prefix ? `${prefix}.${k}` : k;
+    if (v != null && typeof v === "object" && !Array.isArray(v)) {
+      flattenJson(v, key, out);
+    } else {
+      out[key] = v;
+    }
+  }
+  return out;
+}
+function unflattenJson(flat) {
+  const root = {};
+  for (const [k, v] of Object.entries(flat)) {
+    const parts = k.split(".");
+    let cur = root;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isLeaf = i === parts.length - 1;
+      if (!Object.prototype.hasOwnProperty.call(cur, part)) {
+        cur[part] = isLeaf ? v : {};
+      } else if (isLeaf) {
+        cur[part] = v;
+      }
+      cur = cur[part];
+    }
+  }
+  return root;
+}
+function extractPlaceholders(str) {
+  if (typeof str !== "string") return new Set();
+  const set = new Set();
+  let m;
+  while ((m = PLACEHOLDER_REGEX.exec(str))) set.add(m[1]);
+  return set;
+}
+function validateKeyAndPlaceholderParity({ sourceFlat, targetFlat }) {
+  const errors = [];
+  const missing = [];
+  const extra = [];
+  for (const key of Object.keys(sourceFlat))
+    Object.prototype.hasOwnProperty.call(targetFlat, key)
+      ? null
+      : missing.push(key);
+  for (const key of Object.keys(targetFlat))
+    Object.prototype.hasOwnProperty.call(sourceFlat, key)
+      ? null
+      : extra.push(key);
+  const placeholderDiffs = [];
+  for (const key of Object.keys(sourceFlat)) {
+    const srcPH = extractPlaceholders(sourceFlat[key]);
+    const tgtPH = extractPlaceholders(targetFlat[key]);
+    const missingPH = [...srcPH].filter((p) => !tgtPH.has(p));
+    const extraPH = [...tgtPH].filter((p) => !srcPH.has(p));
+    missingPH.length || extraPH.length
+      ? placeholderDiffs.push({ key, missingPH, extraPH })
+      : null;
+  }
+  missing.length ? errors.push({ type: "missing_keys", keys: missing }) : null;
+  extra.length ? errors.push({ type: "extra_keys", keys: extra }) : null;
+  placeholderDiffs.length
+    ? errors.push({ type: "placeholder_mismatch", items: placeholderDiffs })
+    : null;
+  return { ok: errors.length === 0, errors };
+}
+
+async function pathExists(p) {
+  try {
+    await fsp.access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+async function ensureDir(p) {
+  (await pathExists(p)) ? null : await fsp.mkdir(p, { recursive: true });
+}
+async function readJsonSafe(file) {
+  const ok = await pathExists(file);
+  if (!ok) return null;
+  const raw = await fsp.readFile(file, "utf8");
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+async function writeJsonPretty(file, data) {
+  await ensureDir(path.dirname(file));
+  const content = JSON.stringify(data, null, 2);
+  await fsp.writeFile(file, content, "utf8");
+}
+async function scanI18nBaseDirs(explicitBaseDir) {
+  const candidates = [];
+  explicitBaseDir ? candidates.push(explicitBaseDir) : null;
+  candidates.push(path.join(process.cwd(), "i18n"));
+  candidates.push(path.join(process.cwd(), "18n"));
+  const existing = [];
+  for (const d of candidates) (await pathExists(d)) ? existing.push(d) : null;
+  return [...new Set(existing)];
+}
+async function scanModulesWithEnglish(baseDir) {
+  const results = [];
+  const entries = await fsp.readdir(baseDir, { withFileTypes: true });
+  for (const ent of entries) {
+    if (!ent.isDirectory()) continue;
+    const moduleDir = path.join(baseDir, ent.name);
+    const enFile = path.join(moduleDir, "en.json");
+    (await pathExists(enFile))
+      ? results.push({
+          baseDir,
+          moduleName: ent.name,
+          moduleDir,
+          sourceFile: enFile,
+        })
+      : null;
+  }
+  return results;
+}
 
 export default class TranslationRunner {
   constructor(opts = {}) {

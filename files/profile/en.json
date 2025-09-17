@@ -1,0 +1,12 @@
+{
+  "profile": "Profile",
+  "edit_profile": "Edit Profile",
+  "view_profile": "View Profile",
+  "update_success": "Profile updated successfully!",
+  "update_error": "Failed to update profile. Please try again.",
+  "change_password": "Change Password",
+  "upload_avatar": "Upload Avatar",
+  "personal_info": "Personal Information",
+  "account_settings": "Account Settings",
+  "joined_on": "Joined on {date}"
+}

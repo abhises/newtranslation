@@ -1,0 +1,22 @@
+{
+  "support": "Support",
+  "help_center": "Help Center",
+  "faq": "Frequently Asked Questions",
+  "contact_us": "Contact Us",
+  "submit_ticket": "Submit a Ticket",
+  "my_tickets": "My Tickets",
+  "ticket_status": "Ticket Status",
+  "live_chat": "Live Chat",
+  "call_support": "Call Support",
+  "email_support": "Email Support",
+  "troubleshooting": "Troubleshooting",
+  "guides": "Guides & Tutorials",
+  "community_forum": "Community Forum",
+  "report_issue": "Report an Issue",
+  "feedback": "Send Feedback",
+  "no_results": "No results found",
+  "search_help": "Search for help...",
+  "response_time": "Average response time: {hours} hours",
+  "resolved": "Resolved",
+  "unresolved": "Unresolved"
+}

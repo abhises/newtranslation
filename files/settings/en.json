@@ -1,0 +1,12 @@
+{
+  "settings": "Settings",
+  "account_settings": "Account Settings",
+  "privacy_settings": "Privacy Settings",
+  "notification_settings": "Notification Settings",
+  "language": "Language",
+  "change_password": "Change Password",
+  "update_profile": "Update Profile",
+  "enable_dark_mode": "Enable Dark Mode",
+  "save_changes": "Save Changes",
+  "reset_to_default": "Reset to Default"
+}

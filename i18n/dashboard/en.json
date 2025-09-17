@@ -1,4 +1,12 @@
 {
-  "hello": "Hello",
-  "welcome": "Welcome {name}"
+  "dashboard_title": "Dashboard",
+  "overview": "Overview",
+  "total_users": "Total Users: {count}",
+  "active_sessions": "Active Sessions",
+  "notifications": "You have {count} new notifications",
+  "settings": "Settings",
+  "logout": "Logout",
+  "profile_greeting": "Hello, {name}",
+  "last_login": "Last login: {date}",
+  "view_reports": "View Reports"
 }

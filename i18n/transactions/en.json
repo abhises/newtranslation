@@ -1,0 +1,12 @@
+{
+  "transactions": "Transactions",
+  "transaction_id": "Transaction ID",
+  "date": "Date",
+  "amount": "Amount",
+  "status": "Status",
+  "payment_method": "Payment Method",
+  "view_details": "View Details",
+  "transaction_successful": "Transaction successful",
+  "transaction_failed": "Transaction failed",
+  "no_transactions_found": "No transactions found"
+}

@@ -1,0 +1,12 @@
+{
+  "users": "Users",
+  "add_user": "Add User",
+  "edit_user": "Edit User",
+  "delete_user": "Delete User",
+  "user_list": "User List",
+  "user_details": "User Details",
+  "no_users_found": "No users found",
+  "active_users": "Active Users",
+  "inactive_users": "Inactive Users",
+  "last_login": "Last login: {date}"
+}
